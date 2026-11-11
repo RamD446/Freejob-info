@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "All India Jobs | Find your next opportunity",
+  title: "freejob-info | Find your next opportunity",
   description: "Explore the latest jobs, walk-in drives, and government openings across India.",
 };
 

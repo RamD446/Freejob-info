@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { MessageCircle } from "lucide-react";
 import { onValue, push, ref, runTransaction, set } from "firebase/database";
 import { useEffect, useState, type FormEvent } from "react";
 import SiteHeader from "./site-header";
+import SiteFooter from "./site-footer";
 import CompanyBadge from "./company-badge";
 import { getFirebaseServices } from "../lib/firebase";
 import { Job, JobComment } from "../lib/types";
@@ -81,10 +83,14 @@ export default function JobDetails({ jobId }: { jobId: string }) {
   if (loading) return <main className="portal-shell"><SiteHeader /><div className="detail-state">Loading job details…</div></main>;
   if (!job) return <main className="portal-shell"><SiteHeader /><div className="detail-state"><p className="eyebrow">JOB NOT AVAILABLE</p><h1>This listing may have expired.</h1><Link className="primary-link" href="/">Back to jobs <span>→</span></Link></div></main>;
 
-  const detailRows = plainText(job.fullInformationTableFormat).split("\n").map((line) => {
+  const detailRows = [
+    ...(job.company ? [["Company", job.company] as [string, string]] : []),
+    ...(job.createdBy ? [["Job posted by", job.createdBy] as [string, string]] : []),
+    ...plainText(job.fullInformationTableFormat).split("\n").map((line) => {
     const divider = line.indexOf(":");
     return divider > 0 ? [line.slice(0, divider).trim(), line.slice(divider + 1).trim()] : null;
-  }).filter((row): row is [string, string] => Boolean(row?.[0] && row?.[1]));
+    }).filter((row): row is [string, string] => Boolean(row?.[0] && row?.[1])),
+  ];
 
   return (
     <main className="portal-shell">
@@ -99,8 +105,11 @@ export default function JobDetails({ jobId }: { jobId: string }) {
               <button className="icon-button detail-share" onClick={shareJob} type="button" aria-label="Share this job" title="Share this job">↗</button>
             </header>
             <div className="detail-facts"><div><span>Posted</span><strong>{displayDate(job.createdDate)}</strong></div>{job.walkInDate ? <div><span>Walk-in date</span><strong>{displayDate(job.walkInDate)}</strong></div> : null}{job.lastDateToApply ? <div><span>Apply by</span><strong>{displayDate(job.lastDateToApply)}</strong></div> : null}</div>
-            {job.otherLink ? <a className="apply-button" href={job.otherLink} target="_blank" rel="noreferrer">Apply on official site <span aria-hidden="true">↗</span></a> : null}
-            {job.applyPdfLink ? <a className="pdf-link" href={job.applyPdfLink} target="_blank" rel="noreferrer">View official PDF ↗</a> : null}
+            <div className="detail-action-links">
+              {job.otherLink ? <a className="apply-button" href={job.otherLink} target="_blank" rel="noreferrer">Apply on official site <span aria-hidden="true">↗</span></a> : null}
+              {job.applyPdfLink ? <a className="pdf-link" href={job.applyPdfLink} target="_blank" rel="noreferrer">View official PDF ↗</a> : null}
+              <a className="detail-whatsapp-link" href="https://whatsapp.com/channel/0029VbCLJWjCRs1nIKjUlh3p" target="_blank" rel="noreferrer"><MessageCircle size={15} aria-hidden="true" /> Join job alerts</a>
+            </div>
             <section className="detail-section"><p className="eyebrow">THE OPPORTUNITY</p><h2>About this role</h2><p className="rich-text">{plainText(job.description) || "No description has been provided for this listing."}</p></section>
             {detailRows.length > 0 ? <section className="detail-section"><p className="eyebrow">AT A GLANCE</p><h2>Job information</h2><dl className="info-table">{detailRows.map(([label, value], index) => <div key={`${label}-${index}`}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></section> : null}
             {job.fullJobInformation ? <section className="detail-section"><p className="eyebrow">MORE INFORMATION</p><h2>Full notification</h2><p className="rich-text">{plainText(job.fullJobInformation)}</p></section> : null}
@@ -113,7 +122,7 @@ export default function JobDetails({ jobId }: { jobId: string }) {
           <aside className="related-sidebar"><p className="eyebrow">KEEP EXPLORING</p><h2>Recent openings</h2>{recentJobs.map((item) => <Link className="related-job" key={item.id} href={`/job/${item.id}/${slug(item.title)}`}><span>{item.company}</span><strong>{item.title}</strong><small>{displayDate(item.createdDate)}</small></Link>)}<Link className="all-jobs-link" href="/">Browse all jobs <span>→</span></Link></aside>
         </div>
       </div>
-      <footer className="site-footer"><span>All India Jobs</span><span>Opportunities, updated daily.</span><Link href="/">All listings</Link></footer>
+      <SiteFooter />
     </main>
   );
 }

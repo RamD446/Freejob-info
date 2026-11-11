@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowUpRight, MessageCircle } from "lucide-react";
 import { onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import CompanyBadge from "./company-badge";
 import SiteHeader from "./site-header";
+import SiteFooter from "./site-footer";
 import { getFirebaseServices } from "../lib/firebase";
 import { Job } from "../lib/types";
 
@@ -25,9 +27,10 @@ export default function JobsHome() {
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("All jobs");
   const [jobType, setJobType] = useState("All job types");
+  const [companyFilter, setCompanyFilter] = useState("All companies");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const pageSize = 12;
+  const pageSize = 30;
 
   useEffect(() => {
     const { db } = getFirebaseServices();
@@ -45,18 +48,23 @@ export default function JobsHome() {
   }, []);
 
   const jobTypes = ["All job types", ...new Set(jobs.map((job) => job.jobType?.trim()).filter((value): value is string => Boolean(value)))];
+  const companyNames = [...new Set(jobs.map((job) => job.company?.trim()).filter((value): value is string => Boolean(value)))].sort((first, second) => first.localeCompare(second));
+  const companies = ["All companies", ...companyNames];
   const filtered = jobs.filter((job) => {
     const search = `${job.title} ${job.company} ${job.description || ""}`.toLowerCase();
     const categoryMatch = filter === "All jobs"
       || (filter === "Walk-ins" ? job.walkInDrive === true : filter === "Freshers" || filter === "Experienced"
         ? (job.experience || "").toLowerCase().includes(filter.toLowerCase())
         : (job.jobType || "").toLowerCase() === filter.toLowerCase());
-    return categoryMatch && (jobType === "All job types" || job.jobType === jobType) && search.includes(query.toLowerCase());
+    return categoryMatch
+      && (jobType === "All job types" || job.jobType === jobType)
+      && (companyFilter === "All companies" || job.company?.trim() === companyFilter)
+      && search.includes(query.toLowerCase());
   });
   const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const visibleJobs = filtered.slice((page - 1) * pageSize, page * pageSize);
-  const governmentCount = jobs.filter((job) => job.jobType === "Government Jobs").length;
-  const walkInCount = jobs.filter((job) => job.walkInDrive).length;
+  const recentGovernmentJobs = jobs.filter((job) => job.jobType === "Government Jobs").slice(0, 4);
+  const recentWalkInJobs = jobs.filter((job) => job.walkInDrive).slice(0, 4);
 
   function chooseFilter(value: string) {
     setFilter(value);
@@ -72,43 +80,29 @@ export default function JobsHome() {
   return (
     <main className="portal-shell">
       <SiteHeader />
-      <section className="hero-band">
-        <div className="hero-copy">
-          <p className="eyebrow">YOUR NEXT MOVE STARTS HERE</p>
-          <h1>Find work that<br /><em>moves you forward.</em></h1>
-          <p className="hero-subtitle">Fresh openings from across India, gathered in one place.</p>
-          <form className="search-bar" onSubmit={(event) => { event.preventDefault(); setPage(1); }}>
-            <span className="search-symbol" aria-hidden="true">⌕</span>
-            <label className="sr-only" htmlFor="job-search">Search jobs and companies</label>
-            <input id="job-search" value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Role, company, or keyword" />
-            <button type="submit">Search jobs <span aria-hidden="true">→</span></button>
-          </form>
-        </div>
-        <div className="hero-aside" aria-label="Job highlights">
-          <p className="hero-aside-label">LIVE OPPORTUNITIES</p>
-          <div className="hero-stat"><strong>{jobs.length.toLocaleString("en-IN")}</strong><span>open listings</span></div>
-          <div className="hero-stat"><strong>{walkInCount.toLocaleString("en-IN")}</strong><span>walk-in drives</span></div>
-          <div className="hero-stat"><strong>{governmentCount.toLocaleString("en-IN")}</strong><span>government roles</span></div>
-          <span className="hero-stamp">UPDATED<br />DAILY</span>
-        </div>
-      </section>
-
       <section className="portal-content" aria-label="Browse jobs">
-        <div className="content-heading">
-          <div><p className="eyebrow">THE LATEST OPENINGS</p><h2>Opportunities for you</h2></div>
+        <div className="content-heading" id="latest-jobs">
+          <div><p className="eyebrow">FREE JOB INFORMATION</p><h1>Latest job openings</h1></div>
           <span className="results-total">{filtered.length} {filtered.length === 1 ? "role" : "roles"}</span>
         </div>
         <div className="browse-layout">
           <div className="jobs-column">
-            <div className="filter-tabs" role="group" aria-label="Filter jobs by category">
+            <a className="whatsapp-follow-card" href="https://whatsapp.com/channel/0029VbCLJWjCRs1nIKjUlh3p" target="_blank" rel="noreferrer">
+              <span className="whatsapp-follow-icon"><MessageCircle size={20} aria-hidden="true" /></span>
+              <span className="whatsapp-follow-copy"><strong>Never miss a new opening</strong><small>Get free job alerts on WhatsApp.</small></span>
+              <span className="whatsapp-follow-action">Join jobs group <ArrowUpRight size={15} aria-hidden="true" /></span>
+            </a>
+            <form className="search-bar home-search-bar" id="job-search" onSubmit={(event) => { event.preventDefault(); setPage(1); }}>
+              <span className="search-symbol" aria-hidden="true">⌕</span>
+              <label className="sr-only" htmlFor="job-search-input">Search jobs and companies</label>
+              <input id="job-search-input" value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Search jobs, companies, or keywords" />
+              <button type="submit">Search jobs <span aria-hidden="true">→</span></button>
+            </form>
+            <div className="filter-tabs" id="job-categories" role="group" aria-label="Filter jobs by category">
               {quickFilters.map((item) => <button key={item} className={filter === item ? "filter-tab active" : "filter-tab"} onClick={() => chooseFilter(item)} type="button">{item}</button>)}
             </div>
             <div className="jobs-toolbar">
               <span>Sorted by newest</span>
-              <label className="sr-only" htmlFor="type-filter">Filter by job type</label>
-              <select id="type-filter" value={jobType} onChange={(event) => { setJobType(event.target.value); setPage(1); }}>
-                {jobTypes.map((type) => <option key={type}>{type}</option>)}
-              </select>
             </div>
             {loading ? <div className="state-panel"><span className="loader-dot" />Loading the latest jobs…</div> : null}
             {error ? <div className="state-panel error-panel">{error}</div> : null}
@@ -129,13 +123,27 @@ export default function JobsHome() {
             {pages > 1 ? <nav className="pagination" aria-label="Job listing pages"><button type="button" disabled={page === 1} onClick={() => setPage(page - 1)}>← Previous</button><span>Page {page} of {pages}</span><button type="button" disabled={page === pages} onClick={() => setPage(page + 1)}>Next →</button></nav> : null}
           </div>
           <aside className="browse-sidebar">
-            <section id="government" className="side-section"><p className="eyebrow">IN FOCUS</p><h3>Government jobs</h3><p>Explore public-sector openings and new notifications.</p><button type="button" className="side-link" onClick={() => chooseFilter("Government Jobs")}>Browse government roles <span>→</span></button></section>
-            <section id="walk-ins" className="side-section walkin-section"><p className="eyebrow">MEET THEM IN PERSON</p><h3>Walk-in drives</h3><p>Find employers hiring directly through walk-in interviews.</p><button type="button" className="side-link" onClick={() => chooseFilter("Walk-ins")}>See walk-in opportunities <span>→</span></button></section>
-            <a className="whatsapp-link" href="https://whatsapp.com/channel/0029VbCLJWjCRs1nIKjUlh3p" target="_blank" rel="noreferrer"><span className="whatsapp-symbol" aria-hidden="true">WA</span><span><strong>Job alerts on WhatsApp</strong><small>Follow All India Jobs</small></span><b aria-hidden="true">↗</b></a>
+            <section id="government" className="side-section">
+              <p className="eyebrow">LATEST UPDATES</p><h2>Recent government jobs</h2>
+              {recentGovernmentJobs.map((job) => <Link className="sidebar-job" href={`/job/${job.id}/${slug(job.title)}`} key={job.id}><strong>{job.title}</strong><small>{job.company} · {postedDate(job.createdDate)}</small></Link>)}
+              {recentGovernmentJobs.length === 0 ? <p className="sidebar-empty">No recent listings.</p> : null}
+              <button type="button" className="side-link" onClick={() => chooseFilter("Government Jobs")}>Browse all government jobs <span>→</span></button>
+            </section>
+            <section id="walk-ins" className="side-section walkin-section">
+              <p className="eyebrow">MEET THEM IN PERSON</p><h2>Recent walk-ins</h2>
+              {recentWalkInJobs.map((job) => <Link className="sidebar-job" href={`/job/${job.id}/${slug(job.title)}`} key={job.id}><strong>{job.title}</strong><small>{job.company} · {postedDate(job.createdDate)}</small></Link>)}
+              {recentWalkInJobs.length === 0 ? <p className="sidebar-empty">No recent walk-ins.</p> : null}
+              <button type="button" className="side-link" onClick={() => chooseFilter("Walk-ins")}>Browse all walk-ins <span>→</span></button>
+            </section>
+            <section className="side-section side-filter-section">
+              <p className="eyebrow">REFINE LISTINGS</p><h2>Filter listings</h2>
+              <label className="sidebar-filter-control"><span>Job type</span><select value={jobType} onChange={(event) => { setJobType(event.target.value); setPage(1); }}>{jobTypes.map((type) => <option key={type}>{type}</option>)}</select></label>
+              <label className="sidebar-filter-control"><span>Company</span><select value={companyFilter} onChange={(event) => { setCompanyFilter(event.target.value); setPage(1); }}>{companies.map((company) => <option key={company}>{company}</option>)}</select></label>
+            </section>
           </aside>
         </div>
       </section>
-      <footer className="site-footer"><span>All India Jobs</span><span>Opportunities, updated daily.</span><Link href="/login">Admin</Link></footer>
+      <SiteFooter />
     </main>
   );
 }

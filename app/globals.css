@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f8f4;
-  --foreground: #202a23;
-  --muted: #68756c;
-  --line: #dce3da;
-  --green: #174832;
-  --lime: #d8f56e;
+  --background: #f4f6f8;
+  --foreground: #202a34;
+  --muted: #687581;
+  --line: #d9e0e7;
+  --green: #16466b;
+  --lime: #cde7fb;
   --rust: #c85131;
 }
 
@@ -425,48 +425,57 @@ button {
 
 .site-header {
   align-items: center;
-  border-bottom: 1px solid var(--line);
+  background: linear-gradient(110deg, #123b62, #0b2b49);
+  box-shadow: 0 3px 12px rgba(14, 37, 59, 0.2);
   display: flex;
-  height: 76px;
+  height: 72px;
   justify-content: space-between;
-  margin: 0 auto;
-  max-width: 1180px;
-  padding: 0 28px;
+  padding: 0 max(28px, calc((100% - 1180px) / 2));
+  position: relative;
+  z-index: 2;
+}
+
+.header-auth {
+  display: flex;
+  flex: 1 1 0;
+  justify-content: flex-end;
 }
 
 .brand {
   align-items: center;
-  color: var(--foreground);
+  color: #fff;
   display: inline-flex;
   font-size: 15px;
   font-weight: 720;
+  flex: 1 1 0;
   gap: 10px;
+  justify-content: flex-start;
   text-decoration: none;
 }
 
 .brand-mark {
   align-items: center;
-  background: var(--green);
-  border-radius: 6px;
-  color: var(--lime);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 5px;
+  color: #fff;
   display: flex;
-  font-size: 10px;
-  font-weight: 800;
-  height: 30px;
+  height: 34px;
   justify-content: center;
-  letter-spacing: 0;
-  width: 34px;
+  width: 36px;
 }
 
 .main-nav {
   align-items: center;
   display: flex;
+  flex: 1 1 auto;
   gap: 31px;
+  justify-content: center;
 }
 
 .main-nav a,
 .nav-login {
-  color: #536258;
+  color: rgba(255, 255, 255, 0.82);
   font-size: 12px;
   text-decoration: none;
   transition: color 160ms ease;
@@ -474,30 +483,32 @@ button {
 
 .main-nav a:hover,
 .nav-login:hover {
-  color: var(--green);
+  color: #fff;
 }
 
 .nav-login {
   align-items: center;
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 4px;
-  color: var(--foreground);
+  color: #fff;
   display: inline-flex;
-  gap: 14px;
+  gap: 8px;
   min-height: 37px;
   padding: 0 12px;
+  cursor: pointer;
 }
 
-.nav-login span {
-  color: var(--rust);
-  font-size: 15px;
+.nav-auth-loading {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 11px;
 }
 
 .hero-band {
   background-color: var(--green);
-  background-image: radial-gradient(rgba(216, 245, 110, 0.13) 0.7px, transparent 0.7px);
-  background-position: right 24px top 17px;
-  background-size: 17px 17px;
+  background-image: radial-gradient(rgba(205, 231, 251, 0.13) 0.7px, transparent 0.7px), linear-gradient(110deg, #16466b, #0b2b49);
+  background-position: right 24px top 17px, center;
+  background-size: 17px 17px, cover;
   color: #f7f8f4;
   display: grid;
   gap: 54px;
@@ -676,6 +687,7 @@ button {
   margin-bottom: 6px;
 }
 
+.content-heading h1,
 .content-heading h2,
 .related-sidebar h2,
 .detail-section h2,
@@ -693,6 +705,73 @@ button {
   color: var(--muted);
   font-size: 11px;
   padding-bottom: 3px;
+}
+
+.whatsapp-follow-card {
+  align-items: center;
+  background: #effaf2;
+  border: 1px solid #cce8d3;
+  border-radius: 5px;
+  box-shadow: 0 2px 6px rgba(31, 122, 64, 0.06);
+  color: var(--foreground);
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  text-decoration: none;
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.whatsapp-follow-card:hover {
+  box-shadow: 0 4px 12px rgba(31, 122, 64, 0.12);
+  transform: translateY(-1px);
+}
+
+.whatsapp-follow-icon {
+  align-items: center;
+  background: #d7f0df;
+  border-radius: 50%;
+  color: #178344;
+  display: flex;
+  flex: 0 0 36px;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
+}
+
+.whatsapp-follow-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.whatsapp-follow-copy strong {
+  color: #195c35;
+  font-size: 12px;
+}
+
+.whatsapp-follow-copy small {
+  color: #587565;
+  font-size: 10px;
+}
+
+.whatsapp-follow-action {
+  align-items: center;
+  background: #19864a;
+  border-radius: 4px;
+  color: #fff;
+  display: inline-flex;
+  font-size: 10px;
+  font-weight: 700;
+  gap: 7px;
+  margin-left: auto;
+  padding: 9px 11px;
+  white-space: nowrap;
+}
+
+.home-search-bar {
+  margin-bottom: 15px;
+  max-width: none;
 }
 
 .browse-layout {
@@ -751,16 +830,26 @@ button {
 
 .job-row {
   align-items: center;
-  border-bottom: 1px solid var(--line);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  box-shadow: 0 2px 7px rgba(25, 45, 65, 0.045);
   display: flex;
   gap: 15px;
   min-height: 100px;
-  padding: 14px 0;
-  transition: background 180ms ease;
+  padding: 14px;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
 .job-row:hover {
-  background: rgba(232, 239, 226, 0.44);
+  border-color: #b7c8d7;
+  box-shadow: 0 4px 12px rgba(25, 45, 65, 0.09);
+  transform: translateY(-1px);
+}
+
+.job-list {
+  display: grid;
+  gap: 10px;
 }
 
 .company-badge {
@@ -775,7 +864,18 @@ button {
   font-size: 20px;
   height: 42px;
   justify-content: center;
+  overflow: hidden;
+  position: relative;
   text-transform: uppercase;
+}
+
+.company-badge-image {
+  background: #fff;
+  height: 100%;
+  inset: 0;
+  object-fit: contain;
+  position: absolute;
+  width: 100%;
 }
 
 .job-main {
@@ -901,8 +1001,12 @@ button {
 }
 
 .browse-sidebar {
-  border-left: 1px solid var(--line);
-  padding-left: 24px;
+  align-self: start;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  box-shadow: 0 2px 7px rgba(25, 45, 65, 0.045);
+  padding: 17px;
 }
 
 .side-section {
@@ -921,11 +1025,106 @@ button {
   margin: 0 0 7px;
 }
 
+.side-section h2 {
+  color: var(--foreground);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.3;
+  margin: 0 0 10px;
+}
+
 .side-section > p:not(.eyebrow) {
   color: var(--muted);
   font-size: 10px;
   line-height: 1.6;
   margin: 0 0 12px;
+}
+
+.side-section > .side-link {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
+
+.sidebar-job {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 4px;
+  padding: 9px 0;
+  text-decoration: none;
+}
+
+.sidebar-job strong {
+  color: var(--foreground);
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.sidebar-job small,
+.sidebar-empty {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.sidebar-job:hover strong {
+  color: var(--green);
+}
+
+.sidebar-empty {
+  margin: 0 0 10px;
+}
+
+.sidebar-filter-list {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sidebar-filter {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: #536273;
+  cursor: pointer;
+  font-size: 9px;
+  min-height: 32px;
+  padding: 5px 7px;
+  text-align: left;
+}
+
+.sidebar-filter.active {
+  background: #e8f2fb;
+  border-color: #aac9e2;
+  color: var(--green);
+  font-weight: 700;
+}
+
+.sidebar-filter-control {
+  display: grid;
+  gap: 5px;
+  margin-top: 12px;
+}
+
+.sidebar-filter-control > span {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.sidebar-filter-control select {
+  appearance: none;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--foreground);
+  font-size: 10px;
+  min-height: 36px;
+  min-width: 0;
+  padding: 0 8px;
+  width: 100%;
 }
 
 .walkin-section .eyebrow {
@@ -1044,26 +1243,97 @@ button {
 }
 
 .site-footer {
-  align-items: center;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  display: flex;
-  font-size: 9px;
-  gap: 22px;
-  justify-content: space-between;
+  background: #0c2036;
+  border-top: 3px solid #4e8ac3;
+  color: #d3deea;
+  font-size: 12px;
+  padding: 0;
+}
+
+.footer-container {
   margin: 0 auto;
   max-width: 1180px;
-  min-height: 61px;
-  padding: 0 28px;
+  padding: 38px 28px 16px;
 }
 
-.site-footer span:first-child {
-  color: var(--foreground);
-  font-weight: 700;
+.footer-grid {
+  display: grid;
+  gap: 42px;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  padding-bottom: 30px;
 }
 
-.site-footer a {
+.footer-section {
+  min-width: 0;
+}
+
+.footer-brand {
+  align-items: center;
+  color: #fff;
+  display: inline-flex;
+  font-size: 16px;
+  font-weight: 750;
+  gap: 10px;
   text-decoration: none;
+}
+
+.footer-brand-mark {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  color: #cde7fb;
+  display: inline-flex;
+  height: 34px;
+  justify-content: center;
+  width: 36px;
+}
+
+.footer-about p {
+  color: #a9bacb;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 13px 0 0;
+  max-width: 270px;
+}
+
+.footer-title {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.footer-links {
+  display: grid;
+  gap: 9px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-links a {
+  align-items: center;
+  color: #b7c6d5;
+  display: inline-flex;
+  font-size: 11px;
+  gap: 8px;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.footer-links a:hover {
+  color: #fff;
+}
+
+.footer-bottom {
+  align-items: center;
+  border-top: 1px solid rgba(210, 225, 240, 0.16);
+  color: #9fb0c2;
+  display: flex;
+  font-size: 10px;
+  justify-content: space-between;
+  padding-top: 14px;
 }
 
 .detail-wrap {
@@ -1074,15 +1344,18 @@ button {
 
 .breadcrumbs {
   align-items: center;
-  color: var(--muted);
+  background: linear-gradient(110deg, #16466b, #0b2b49);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.86);
   display: flex;
   font-size: 10px;
   gap: 10px;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
+  padding: 10px 14px;
 }
 
 .breadcrumbs a {
-  color: var(--green);
+  color: #fff;
   text-decoration: none;
 }
 
@@ -1094,7 +1367,12 @@ button {
 }
 
 .detail-main {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(25, 45, 65, 0.05);
   min-width: 0;
+  padding: 20px;
 }
 
 .detail-heading {
@@ -1174,7 +1452,7 @@ button {
 }
 
 .apply-button {
-  margin: 20px 12px 0 0;
+  margin: 0;
   min-height: 40px;
 }
 
@@ -1183,6 +1461,33 @@ button {
   font-size: 10px;
   font-weight: 700;
   text-decoration: none;
+}
+
+.detail-action-links {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0 4px;
+}
+
+.detail-whatsapp-link {
+  align-items: center;
+  background: #e9f7ee;
+  border: 1px solid #b8dfc4;
+  border-radius: 3px;
+  color: #197342;
+  display: inline-flex;
+  font-size: 10px;
+  font-weight: 700;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 12px;
+  text-decoration: none;
+}
+
+.detail-whatsapp-link:hover {
+  background: #d7f0df;
 }
 
 .detail-section {
@@ -1329,8 +1634,11 @@ button {
 }
 
 .related-sidebar {
-  border-left: 1px solid var(--line);
-  padding: 7px 0 0 22px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(25, 45, 65, 0.05);
+  padding: 17px;
 }
 
 .related-sidebar h2 {
@@ -1441,7 +1749,9 @@ button {
   animation: rise-in 600ms 80ms ease-out both;
   background: #fff;
   border: 1px solid var(--line);
+  border-radius: 5px;
   border-top: 3px solid var(--green);
+  box-shadow: 0 3px 10px rgba(25, 45, 65, 0.06);
   display: grid;
   gap: 17px;
   padding: 29px;
@@ -1782,11 +2092,13 @@ button {
 }
 
 @media (max-width: 650px) {
-  .site-header { height: 66px; padding: 0 18px; }
+  .site-header { gap: 8px; height: 66px; padding: 0 18px; }
+  .header-auth { flex: 0 1 auto; }
   .brand { font-size: 13px; }
-  .brand-mark { height: 27px; width: 30px; }
+  .brand-mark { height: 29px; width: 31px; }
   .main-nav { display: none; }
-  .nav-login { font-size: 9px; gap: 8px; min-height: 33px; padding: 0 8px; }
+  .nav-login { font-size: 9px; gap: 6px; min-height: 33px; padding: 0 8px; }
+  .nav-auth-loading { font-size: 9px; }
   .hero-band { display: block; min-height: 0; padding: 44px 21px 30px; }
   .hero-copy h1 { font-size: 43px; }
   .hero-subtitle { font-size: 11px; max-width: 290px; }
@@ -1801,15 +2113,17 @@ button {
   .hero-stat span { font-size: 8px; }
   .hero-stamp { right: 0; top: -19px; }
   .portal-content { padding: 33px 18px 44px; }
-  .content-heading h2 { font-size: 22px; }
+  .content-heading h1, .content-heading h2 { font-size: 22px; }
   .browse-layout, .detail-grid { display: block; padding-top: 15px; }
-  .browse-sidebar, .related-sidebar { border-left: 0; border-top: 1px solid var(--line); margin-top: 28px; padding: 20px 0 0; }
+  .browse-sidebar, .related-sidebar { border: 1px solid var(--line); margin-top: 28px; padding: 17px; }
   .side-section { padding-bottom: 16px; }
   .side-section + .side-section { padding-top: 16px; }
   .filter-tabs { margin-right: -18px; }
   .filter-tab { padding: 0 10px; }
   .jobs-toolbar { min-height: 45px; }
-  .job-row { align-items: flex-start; gap: 10px; min-height: 0; padding: 14px 0; }
+  .whatsapp-follow-card { align-items: flex-start; flex-wrap: wrap; gap: 8px 10px; padding: 10px; }
+  .whatsapp-follow-action { margin-left: 46px; }
+  .job-row { align-items: flex-start; gap: 10px; min-height: 0; padding: 12px; }
   .company-badge { flex-basis: 36px; font-size: 17px; height: 36px; }
   .job-title-link { font-size: 16px; }
   .job-row-end { align-items: flex-end; flex-basis: auto; gap: 9px; margin-left: auto; }
@@ -1817,9 +2131,11 @@ button {
   .job-row-actions { gap: 5px; }
   .view-job { font-size: 9px; }
   .job-row-actions .icon-button { height: 27px; width: 27px; }
-  .site-footer { flex-wrap: wrap; gap: 8px 14px; justify-content: flex-start; min-height: 58px; padding: 12px 18px; }
-  .site-footer span:nth-child(2) { flex: 1; }
+  .footer-container { padding: 28px 18px 14px; }
+  .footer-grid { gap: 24px; grid-template-columns: 1fr; padding-bottom: 22px; }
+  .footer-bottom { align-items: flex-start; flex-direction: column; gap: 6px; }
   .detail-wrap { padding: 21px 18px 42px; }
+  .detail-main { padding: 14px; }
   .breadcrumbs { margin-bottom: 10px; }
   .detail-heading { gap: 11px; padding: 17px 0; }
   .company-badge.large { flex-basis: 43px; font-size: 20px; height: 43px; }

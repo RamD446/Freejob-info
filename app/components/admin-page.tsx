@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { browserSessionPersistence, onAuthStateChanged, setPersistence, signInWithEmailAndPassword, signOut, type User } from "firebase/auth";
+import { browserSessionPersistence, onAuthStateChanged, setPersistence, signInWithEmailAndPassword, type User } from "firebase/auth";
 import { onValue, push, ref, remove, update } from "firebase/database";
 import { useEffect, useState, type FormEvent } from "react";
 import * as XLSX from "xlsx";
 import SiteHeader from "./site-header";
+import SiteFooter from "./site-footer";
 import CompanyBadge from "./company-badge";
 import { getFirebaseServices } from "../lib/firebase";
 import { JOB_ICON_OPTIONS } from "../lib/job-icons";
@@ -112,13 +113,6 @@ export default function AdminPage() {
       setLoginError(error instanceof Error ? error.message : "Unable to sign in. Check your credentials.");
       setAuthLoading(false);
     }
-  }
-
-  async function logout() {
-    const { auth } = getFirebaseServices();
-    await signOut(auth);
-    setFormOpen(false);
-    setEditingId(null);
   }
 
   function startCreate() {
@@ -253,7 +247,7 @@ export default function AdminPage() {
       }
       setNotice(`Imported ${imported} jobs${rows.length > imported ? `; skipped ${rows.length - imported} incomplete rows` : ""}.`);
     } catch {
-      setNotice("Could not import this spreadsheet. Use the All India Jobs XLS column format.");
+      setNotice("Could not import this spreadsheet. Use the freejob-info XLS column format.");
     } finally {
       setImporting(false);
     }
@@ -265,9 +259,9 @@ export default function AdminPage() {
     <main className="portal-shell">
       <SiteHeader />
       <section className="login-page">
-        <div className="login-intro"><p className="eyebrow">PUBLISHER ACCESS</p><h1>Welcome<br /><em>back.</em></h1><p>Sign in to manage All India Jobs listings.</p><Link href="/">← Back to job listings</Link></div>
+        <div className="login-intro"><p className="eyebrow">PUBLISHER ACCESS</p><h1>Welcome<br /><em>back.</em></h1><p>Sign in to manage freejob-info listings.</p><Link href="/">← Back to job listings</Link></div>
         <form className="login-form" onSubmit={login}>
-          <div className="login-form-heading"><span className="login-shield" aria-hidden="true">AJ</span><div><p className="eyebrow">ADMINISTRATOR</p><h2>Sign in</h2></div></div>
+          <div className="login-form-heading"><span className="login-shield" aria-hidden="true">FJ</span><div><p className="eyebrow">ADMINISTRATOR</p><h2>Sign in</h2></div></div>
           <label><span>Email address</span><input type="email" autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" required /></label>
           <label><span>Password</span><input type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" required /></label>
           {loginError ? <p className="form-error">{loginError}</p> : null}
@@ -275,7 +269,7 @@ export default function AdminPage() {
           <p className="login-note">Use your registered Firebase admin account.</p>
         </form>
       </section>
-      <footer className="site-footer"><span>All India Jobs</span><span>Secure publisher access</span><Link href="/">Home</Link></footer>
+      <SiteFooter />
     </main>
   );
 
@@ -283,8 +277,8 @@ export default function AdminPage() {
     <main className="portal-shell">
       <SiteHeader />
       <section className="admin-wrap">
-        <div className="admin-heading"><div><p className="eyebrow">PUBLISHER WORKSPACE</p><h1>Job management</h1><p>Signed in as <strong>{user.email}</strong></p></div><button className="secondary-button" type="button" onClick={logout}>Sign out</button></div>
-        <div className="admin-summary"><strong>{jobs.length.toLocaleString("en-IN")}</strong><span>published listings</span><span className="admin-summary-divider" /><span>Manage the live All India Jobs feed</span></div>
+        <div className="admin-heading"><div><p className="eyebrow">PUBLISHER WORKSPACE</p><h1>Job management</h1><p>Signed in as <strong>{user.email}</strong></p></div></div>
+        <div className="admin-summary"><strong>{jobs.length.toLocaleString("en-IN")}</strong><span>published listings</span><span className="admin-summary-divider" /><span>Manage the live freejob-info feed</span></div>
         <div className="admin-toolbar"><div className="admin-controls"><label className="sr-only" htmlFor="admin-search">Search jobs</label><input id="admin-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search title or company" /><label className="sr-only" htmlFor="admin-type">Filter by job type</label><select id="admin-type" value={filter} onChange={(event) => setFilter(event.target.value)}><option>All job types</option>{JOB_TYPES.map((type) => <option key={type}>{type}</option>)}</select></div><div className="admin-actions"><label className="secondary-button import-button">{importing ? "Importing…" : "Import XLS"}<input type="file" accept=".xls,.xlsx" onChange={importJobs} disabled={importing} /></label><button className="secondary-button" type="button" onClick={exportJobs}>Export XLS</button><button className="primary-button" type="button" onClick={startCreate}>＋ Create job</button></div></div>
         {notice ? <p className="admin-notice" role="status">{notice}</p> : null}
         {formOpen ? <div className="job-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setFormOpen(false); }}><section className="job-editor" role="dialog" aria-modal="true" aria-labelledby="job-editor-title"><form onSubmit={saveJob}><div className="editor-heading"><div><p className="eyebrow">{editingId ? "UPDATE LISTING" : "NEW LISTING"}</p><h2 id="job-editor-title">{editingId ? "Edit job" : "Create a job"}</h2></div><button type="button" className="icon-button" onClick={() => setFormOpen(false)} aria-label="Close form">×</button></div>
@@ -325,7 +319,7 @@ export default function AdminPage() {
         <div className="admin-table-heading"><h2>Published jobs</h2><span>{filteredJobs.length} shown</span></div>
         <div className="admin-job-list">{filteredJobs.map((job) => <article className="admin-job-row" key={job.id}><CompanyBadge job={job} /><div className="admin-job-info"><strong>{job.title}</strong><span>{job.company} <i /> {job.jobType || "Opportunity"}</span></div><time>{dateLabel(job.createdDate)}</time><div className="admin-job-actions"><button className="text-action" type="button" onClick={() => startEdit(job)}>Edit</button><button className="text-action danger-action" type="button" onClick={() => deleteJob(job)}>Delete</button></div></article>)}{filteredJobs.length === 0 ? <div className="state-panel">No jobs match this view.</div> : null}</div>
       </section>
-      <footer className="site-footer"><span>All India Jobs</span><span>Publisher workspace</span><Link href="/">View public site</Link></footer>
+      <SiteFooter />
     </main>
   );
 }
