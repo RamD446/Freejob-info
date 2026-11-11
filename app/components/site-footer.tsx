@@ -21,7 +21,7 @@ export default function SiteFooter() {
               <li><Link href="/#latest-jobs">All latest jobs</Link></li>
               <li><Link href="/#government">Government jobs</Link></li>
               <li><Link href="/#walk-ins">Walk-in drives</Link></li>
-              <li><Link href="/#job-categories">Job categories</Link></li>
+              <li><Link href="/?category=all">All categories</Link></li>
             </ul>
           </section>
           <section className="footer-section">

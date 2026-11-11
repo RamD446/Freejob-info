@@ -6,6 +6,7 @@ import { onValue, push, ref, runTransaction, set } from "firebase/database";
 import { useEffect, useState, type FormEvent } from "react";
 import SiteHeader from "./site-header";
 import SiteFooter from "./site-footer";
+import LoadingSpinner from "./loading-spinner";
 import CompanyBadge from "./company-badge";
 import { getFirebaseServices } from "../lib/firebase";
 import { Job, JobComment } from "../lib/types";
@@ -80,7 +81,7 @@ export default function JobDetails({ jobId }: { jobId: string }) {
     else void navigator.clipboard.writeText(url);
   }
 
-  if (loading) return <main className="portal-shell"><SiteHeader /><div className="detail-state">Loading job details…</div></main>;
+  if (loading) return <main className="portal-shell"><SiteHeader /><LoadingSpinner /><SiteFooter /></main>;
   if (!job) return <main className="portal-shell"><SiteHeader /><div className="detail-state"><p className="eyebrow">JOB NOT AVAILABLE</p><h1>This listing may have expired.</h1><Link className="primary-link" href="/">Back to jobs <span>→</span></Link></div></main>;
 
   const detailRows = [
@@ -91,6 +92,7 @@ export default function JobDetails({ jobId }: { jobId: string }) {
     return divider > 0 ? [line.slice(0, divider).trim(), line.slice(divider + 1).trim()] : null;
     }).filter((row): row is [string, string] => Boolean(row?.[0] && row?.[1])),
   ];
+  const popularCompanies = [...new Set(recentJobs.map((item) => item.company?.trim()).filter((company): company is string => Boolean(company)))].slice(0, 6);
 
   return (
     <main className="portal-shell">
@@ -113,6 +115,7 @@ export default function JobDetails({ jobId }: { jobId: string }) {
             <section className="detail-section"><p className="eyebrow">THE OPPORTUNITY</p><h2>About this role</h2><p className="rich-text">{plainText(job.description) || "No description has been provided for this listing."}</p></section>
             {detailRows.length > 0 ? <section className="detail-section"><p className="eyebrow">AT A GLANCE</p><h2>Job information</h2><dl className="info-table">{detailRows.map(([label, value], index) => <div key={`${label}-${index}`}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></section> : null}
             {job.fullJobInformation ? <section className="detail-section"><p className="eyebrow">MORE INFORMATION</p><h2>Full notification</h2><p className="rich-text">{plainText(job.fullJobInformation)}</p></section> : null}
+            {popularCompanies.length > 0 ? <section className="detail-section popular-companies"><p className="eyebrow">EXPLORE EMPLOYERS</p><h2>Popular companies</h2><div className="company-chips">{popularCompanies.map((company) => <Link className="company-chip" href={`/?q=${encodeURIComponent(company)}`} key={company}>{company}</Link>)}</div></section> : null}
             <section className="comments-section"><div className="comments-title"><div><p className="eyebrow">JOIN THE CONVERSATION</p><h2>Comments <span>{comments.length}</span></h2></div></div>
               <form className="comment-form" onSubmit={submitComment}><label><span>Your name</span><input value={name} onChange={(event) => setName(event.target.value)} maxLength={10} required /></label><label><span>Comment</span><textarea value={comment} onChange={(event) => setComment(event.target.value)} maxLength={50} rows={3} required /></label>{commentError ? <p className="form-error">{commentError}</p> : null}<button className="primary-button" type="submit" disabled={saving}>{saving ? "Posting…" : "Post comment"}</button></form>
               {comments.map((item) => <article className="comment-item" key={item.id}><span className="comment-avatar">{item.name.charAt(0).toUpperCase()}</span><div><strong>{item.name}</strong><p>{item.comment}</p><time>{displayDate(item.createdDate)}</time></div></article>)}

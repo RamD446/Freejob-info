@@ -1,16 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { ArrowUpRight, MessageCircle, Share2 } from "lucide-react";
 import { onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import CompanyBadge from "./company-badge";
+import LoadingSpinner from "./loading-spinner";
 import SiteHeader from "./site-header";
 import SiteFooter from "./site-footer";
 import { getFirebaseServices } from "../lib/firebase";
 import { Job } from "../lib/types";
 
-const quickFilters = ["All jobs", "Government Jobs", "Walk-ins", "Freshers", "Experienced"];
+const categoryFilters: Record<string, string> = {
+  all: "All jobs",
+  government: "Government Jobs",
+  "walk-ins": "Walk-ins",
+  freshers: "Freshers",
+  experienced: "Experienced",
+};
 
 function slug(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -22,13 +30,20 @@ function postedDate(value: string) {
 }
 
 export default function JobsHome() {
+  const searchParams = useSearchParams();
+  const urlCategory = searchParams.get("category") || "all";
+  const urlQuery = searchParams.get("q") || "";
+  return <JobsHomeContent key={`${urlCategory}:${urlQuery}`} initialCategory={urlCategory} initialQuery={urlQuery} />;
+}
+
+function JobsHomeContent({ initialCategory, initialQuery }: { initialCategory: string; initialQuery: string }) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [filter, setFilter] = useState("All jobs");
+  const [filter, setFilter] = useState(categoryFilters[initialCategory] || "All jobs");
   const [jobType, setJobType] = useState("All job types");
   const [companyFilter, setCompanyFilter] = useState("All companies");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [page, setPage] = useState(1);
   const pageSize = 30;
 
@@ -77,6 +92,10 @@ export default function JobsHome() {
     else void navigator.clipboard.writeText(url);
   }
 
+  if (loading) {
+    return <main className="portal-shell"><SiteHeader /><LoadingSpinner /><SiteFooter /></main>;
+  }
+
   return (
     <main className="portal-shell">
       <SiteHeader />
@@ -98,25 +117,21 @@ export default function JobsHome() {
               <input id="job-search-input" value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Search jobs, companies, or keywords" />
               <button type="submit">Search jobs <span aria-hidden="true">→</span></button>
             </form>
-            <div className="filter-tabs" id="job-categories" role="group" aria-label="Filter jobs by category">
-              {quickFilters.map((item) => <button key={item} className={filter === item ? "filter-tab active" : "filter-tab"} onClick={() => chooseFilter(item)} type="button">{item}</button>)}
-            </div>
             <div className="jobs-toolbar">
               <span>Sorted by newest</span>
             </div>
-            {loading ? <div className="state-panel"><span className="loader-dot" />Loading the latest jobs…</div> : null}
             {error ? <div className="state-panel error-panel">{error}</div> : null}
             {!loading && !error && visibleJobs.length === 0 ? <div className="state-panel"><strong>No matching jobs yet.</strong><span>Try another category or search term.</span></div> : null}
             <div className="job-list">
               {visibleJobs.map((job, index) => (
                 <article className="job-row" key={job.id}>
-                  <CompanyBadge job={job} />
-                  <div className="job-main">
+                  <div className="job-card-heading">
+                    <CompanyBadge job={job} />
                     <div className="job-meta-top"><span className="job-company">{job.company || "Employer"}</span>{job.walkInDrive ? <span className="tag tag-walkin">Walk-in</span> : null}{index === 0 && page === 1 ? <span className="tag tag-new">New</span> : null}</div>
-                    <Link className="job-title-link" href={`/job/${job.id}/${slug(job.title)}`}>{job.title || "Untitled opportunity"}</Link>
-                    <div className="job-meta-bottom"><span>{job.jobType || "Opportunity"}</span>{job.experience ? <><i /> <span>{job.experience}</span></> : null}{job.walkInDate ? <><i /> <span>Walk-in {postedDate(job.walkInDate)}</span></> : null}</div>
                   </div>
-                  <div className="job-row-end"><span className="posted-date">{postedDate(job.createdDate)}</span><div className="job-row-actions"><button className="icon-button" type="button" title="Share job" aria-label={`Share ${job.title}`} onClick={() => shareJob(job)}>↗</button><Link className="view-job" href={`/job/${job.id}/${slug(job.title)}`}>Details <span aria-hidden="true">→</span></Link></div></div>
+                  <Link className="job-title-link" href={`/job/${job.id}/${slug(job.title)}`}>{job.title || "Untitled opportunity"}</Link>
+                  <div className="job-meta-bottom"><span>{job.jobType || "Opportunity"}</span>{job.experience ? <><i /> <span>{job.experience}</span></> : null}{job.walkInDate ? <><i /> <span>Walk-in {postedDate(job.walkInDate)}</span></> : null}</div>
+                  <div className="job-card-footer"><span className="posted-date">Posted {postedDate(job.createdDate)}</span><div className="job-row-actions"><button className="icon-button" type="button" title="Share job" aria-label={`Share ${job.title}`} onClick={() => shareJob(job)}><Share2 size={15} aria-hidden="true" /></button><Link className="view-job" href={`/job/${job.id}/${slug(job.title)}`}>Details <span aria-hidden="true">→</span></Link></div></div>
                 </article>
               ))}
             </div>
