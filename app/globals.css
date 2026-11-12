@@ -399,7 +399,12 @@ input {
 }
 
 html {
+  scrollbar-width: none;
   scroll-behavior: smooth;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 a {
@@ -1187,7 +1192,14 @@ button {
   background: #e5ecdf;
 }
 
-.view-job,
+.view-job {
+  gap: 6px;
+  padding: 0 8px;
+  text-decoration: none;
+  white-space: nowrap;
+  width: auto;
+}
+
 .side-link,
 .all-jobs-link {
   color: var(--green);
@@ -1197,7 +1209,6 @@ button {
   white-space: nowrap;
 }
 
-.view-job span,
 .side-link span,
 .all-jobs-link span {
   color: var(--rust);
@@ -1655,8 +1666,9 @@ button {
 .detail-heading {
   align-items: flex-start;
   border-bottom: 1px solid var(--line);
-  display: flex;
-  gap: 16px;
+  display: grid;
+  gap: 12px 16px;
+  grid-template-columns: 54px minmax(0, 1fr);
   padding: 22px 0;
 }
 
@@ -1664,11 +1676,23 @@ button {
   flex-basis: 54px;
   font-size: 25px;
   height: 54px;
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .detail-title-block {
-  flex: 1;
+  grid-column: 2;
+  grid-row: 1;
   min-width: 0;
+}
+
+.detail-heading-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  grid-column: 2;
+  grid-row: 2;
 }
 
 .detail-title-block .eyebrow {
@@ -1702,6 +1726,7 @@ button {
 .detail-share {
   flex: 0 0 32px;
   height: 32px;
+  justify-self: start;
   width: 32px;
 }
 
@@ -1734,18 +1759,36 @@ button {
 }
 
 .pdf-link {
-  color: var(--green);
-  font-size: 10px;
-  font-weight: 700;
+  align-items: center;
+  background: #1c6797;
+  border: 0;
+  border-radius: 3px;
+  color: #fff;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 16px;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
   text-decoration: none;
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+.pdf-link:hover {
+  background: #15547c;
+  color: #fff;
+  transform: translateY(-1px);
 }
 
 .detail-action-links {
   align-items: center;
+  border-top: 1px solid var(--line);
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin: 18px 0 4px;
+  margin: 20px 0 4px;
+  padding-top: 18px;
 }
 
 .detail-whatsapp-link {
@@ -1813,29 +1856,34 @@ button {
 }
 
 .info-table {
+  border-collapse: collapse;
+  border-spacing: 0;
   margin: 17px 0 0;
+  table-layout: fixed;
+  width: 100%;
 }
 
-.info-table div {
-  border-top: 1px solid var(--line);
-  display: grid;
-  gap: 18px;
-  grid-template-columns: minmax(110px, 0.4fr) minmax(0, 1fr);
-  padding: 10px 0;
-}
-
-.info-table dt,
-.info-table dd {
+.info-table th,
+.info-table td {
+  border: 1px solid #d6e0e8;
   font-size: 11px;
   margin: 0;
-}
-
-.info-table dt {
-  color: var(--muted);
-}
-
-.info-table dd {
   overflow-wrap: anywhere;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.info-table th {
+  background: #eef4f8;
+  color: #435b6e;
+  font-weight: 650;
+  width: 34%;
+}
+
+.info-table td {
+  background: #fff;
+  color: var(--foreground);
 }
 
 .comments-section {
@@ -2429,13 +2477,17 @@ button {
   .job-row-actions { gap: 5px; }
   .view-job { font-size: 9px; }
   .job-row-actions .icon-button { height: 27px; width: 27px; }
+  .job-row-actions .icon-button.view-job { min-height: 27px; min-width: 62px; padding: 0 7px; width: auto; }
   .footer-container { padding: 28px 18px 14px; }
   .footer-grid { gap: 24px; grid-template-columns: 1fr; padding-bottom: 22px; }
   .footer-bottom { align-items: flex-start; flex-direction: column; gap: 6px; }
   .detail-wrap { padding: 21px 18px 42px; }
   .detail-main { padding: 14px; }
+  .detail-action-links { flex-wrap: nowrap; gap: 8px; }
+  .detail-action-links .apply-button,
+  .detail-action-links .pdf-link { flex: 1 1 0; font-size: 9px; gap: 5px; min-width: 0; padding: 0 7px; white-space: nowrap; }
   .breadcrumbs { margin-bottom: 10px; }
-  .detail-heading { gap: 11px; padding: 17px 0; }
+  .detail-heading { gap: 10px 11px; grid-template-columns: 43px minmax(0, 1fr); padding: 17px 0; }
   .company-badge.large { flex-basis: 43px; font-size: 20px; height: 43px; }
   .detail-title-block h1 { font-size: 23px; }
   .detail-share { flex-basis: 29px; height: 29px; width: 29px; }

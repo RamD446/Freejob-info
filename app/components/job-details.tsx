@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Share2 } from "lucide-react";
 import { onValue, push, ref, runTransaction, set } from "firebase/database";
 import { useEffect, useState, type FormEvent } from "react";
 import SiteHeader from "./site-header";
@@ -104,17 +104,19 @@ export default function JobDetails({ jobId }: { jobId: string }) {
             <header className="detail-heading">
               <CompanyBadge job={job} size="large" />
               <div className="detail-title-block"><p className="eyebrow">{job.company || "EMPLOYER"}</p><h1>{job.title}</h1><div className="detail-tags"><span>{job.jobType || "Opportunity"}</span>{job.experience ? <span>{job.experience}</span> : null}{job.walkInDrive ? <span>Walk-in drive</span> : null}</div></div>
-              <button className="icon-button detail-share" onClick={shareJob} type="button" aria-label="Share this job" title="Share this job">↗</button>
+              <div className="detail-heading-actions">
+                <button className="icon-button detail-share" onClick={shareJob} type="button" aria-label="Share this job" title="Share this job"><Share2 size={16} aria-hidden="true" /></button>
+                <a className="detail-whatsapp-link" href="https://whatsapp.com/channel/0029VbCLJWjCRs1nIKjUlh3p" target="_blank" rel="noreferrer"><MessageCircle size={15} aria-hidden="true" /> Join job alerts</a>
+              </div>
             </header>
             <div className="detail-facts"><div><span>Posted</span><strong>{displayDate(job.createdDate)}</strong></div>{job.walkInDate ? <div><span>Walk-in date</span><strong>{displayDate(job.walkInDate)}</strong></div> : null}{job.lastDateToApply ? <div><span>Apply by</span><strong>{displayDate(job.lastDateToApply)}</strong></div> : null}</div>
-            <div className="detail-action-links">
-              {job.otherLink ? <a className="apply-button" href={job.otherLink} target="_blank" rel="noreferrer">Apply on official site <span aria-hidden="true">↗</span></a> : null}
-              {job.applyPdfLink ? <a className="pdf-link" href={job.applyPdfLink} target="_blank" rel="noreferrer">View official PDF ↗</a> : null}
-              <a className="detail-whatsapp-link" href="https://whatsapp.com/channel/0029VbCLJWjCRs1nIKjUlh3p" target="_blank" rel="noreferrer"><MessageCircle size={15} aria-hidden="true" /> Join job alerts</a>
-            </div>
             <section className="detail-section"><p className="eyebrow">THE OPPORTUNITY</p><h2>About this role</h2><p className="rich-text">{plainText(job.description) || "No description has been provided for this listing."}</p></section>
-            {detailRows.length > 0 ? <section className="detail-section"><p className="eyebrow">AT A GLANCE</p><h2>Job information</h2><dl className="info-table">{detailRows.map(([label, value], index) => <div key={`${label}-${index}`}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></section> : null}
+            {detailRows.length > 0 ? <section className="detail-section"><p className="eyebrow">AT A GLANCE</p><h2>Job information</h2><table className="info-table" aria-label="Job information"><tbody>{detailRows.map(([label, value], index) => <tr key={`${label}-${index}`}><th scope="row">{label}</th><td>{value}</td></tr>)}</tbody></table></section> : null}
             {job.fullJobInformation ? <section className="detail-section"><p className="eyebrow">MORE INFORMATION</p><h2>Full notification</h2><p className="rich-text">{plainText(job.fullJobInformation)}</p></section> : null}
+            {job.otherLink || job.applyPdfLink ? <div className="detail-action-links" aria-label="Application links">
+              {job.otherLink ? <a className="apply-button" href={job.otherLink} target="_blank" rel="noreferrer">Apply on official site <span aria-hidden="true">↗</span></a> : null}
+              {job.applyPdfLink ? <a className="pdf-link" href={job.applyPdfLink} target="_blank" rel="noreferrer">View official PDF <span aria-hidden="true">↗</span></a> : null}
+            </div> : null}
             {popularCompanies.length > 0 ? <section className="detail-section popular-companies"><p className="eyebrow">EXPLORE EMPLOYERS</p><h2>Popular companies</h2><div className="company-chips">{popularCompanies.map((company) => <Link className="company-chip" href={`/?q=${encodeURIComponent(company)}`} key={company}>{company}</Link>)}</div></section> : null}
             <section className="comments-section"><div className="comments-title"><div><p className="eyebrow">JOIN THE CONVERSATION</p><h2>Comments <span>{comments.length}</span></h2></div></div>
               <form className="comment-form" onSubmit={submitComment}><label><span>Your name</span><input value={name} onChange={(event) => setName(event.target.value)} maxLength={10} required /></label><label><span>Comment</span><textarea value={comment} onChange={(event) => setComment(event.target.value)} maxLength={50} rows={3} required /></label>{commentError ? <p className="form-error">{commentError}</p> : null}<button className="primary-button" type="submit" disabled={saving}>{saving ? "Posting…" : "Post comment"}</button></form>

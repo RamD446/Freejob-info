@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowUpRight, MessageCircle, Share2 } from "lucide-react";
+import { ArrowUpRight, Eye, MessageCircle, Share2 } from "lucide-react";
 import { onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import CompanyBadge from "./company-badge";
@@ -131,7 +131,7 @@ function JobsHomeContent({ initialCategory, initialQuery }: { initialCategory: s
                   </div>
                   <Link className="job-title-link" href={`/job/${job.id}/${slug(job.title)}`}>{job.title || "Untitled opportunity"}</Link>
                   <div className="job-meta-bottom"><span>{job.jobType || "Opportunity"}</span>{job.experience ? <><i /> <span>{job.experience}</span></> : null}{job.walkInDate ? <><i /> <span>Walk-in {postedDate(job.walkInDate)}</span></> : null}</div>
-                  <div className="job-card-footer"><span className="posted-date">Posted {postedDate(job.createdDate)}</span><div className="job-row-actions"><button className="icon-button" type="button" title="Share job" aria-label={`Share ${job.title}`} onClick={() => shareJob(job)}><Share2 size={15} aria-hidden="true" /></button><Link className="view-job" href={`/job/${job.id}/${slug(job.title)}`}>Details <span aria-hidden="true">→</span></Link></div></div>
+                  <div className="job-card-footer"><span className="posted-date">Posted {postedDate(job.createdDate)}</span><div className="job-row-actions"><button className="icon-button" type="button" title="Share job" aria-label={`Share ${job.title}`} onClick={() => shareJob(job)}><Share2 size={15} aria-hidden="true" /></button><Link className="icon-button view-job" href={`/job/${job.id}/${slug(job.title)}`} title="View job details" aria-label={`View details for ${job.title}`}><Eye size={16} aria-hidden="true" /><span>Details</span></Link></div></div>
                 </article>
               ))}
             </div>
