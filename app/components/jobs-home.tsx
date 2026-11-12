@@ -41,8 +41,6 @@ function JobsHomeContent({ initialCategory, initialQuery }: { initialCategory: s
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState(categoryFilters[initialCategory] || "All jobs");
-  const [jobType, setJobType] = useState("All job types");
-  const [companyFilter, setCompanyFilter] = useState("All companies");
   const [query, setQuery] = useState(initialQuery);
   const [appliedQuery, setAppliedQuery] = useState(initialQuery);
   const [page, setPage] = useState(1);
@@ -63,9 +61,6 @@ function JobsHomeContent({ initialCategory, initialQuery }: { initialCategory: s
     });
   }, []);
 
-  const jobTypes = ["All job types", ...new Set(jobs.map((job) => job.jobType?.trim()).filter((value): value is string => Boolean(value)))];
-  const companyNames = [...new Set(jobs.map((job) => job.company?.trim()).filter((value): value is string => Boolean(value)))].sort((first, second) => first.localeCompare(second));
-  const companies = ["All companies", ...companyNames];
   const filtered = jobs.filter((job) => {
     const search = `${job.title} ${job.company} ${job.description || ""}`.toLowerCase();
     const categoryMatch = filter === "All jobs"
@@ -73,8 +68,6 @@ function JobsHomeContent({ initialCategory, initialQuery }: { initialCategory: s
         ? (job.experience || "").toLowerCase().includes(filter.toLowerCase())
         : (job.jobType || "").toLowerCase() === filter.toLowerCase());
     return categoryMatch
-      && (jobType === "All job types" || job.jobType === jobType)
-      && (companyFilter === "All companies" || job.company?.trim() === companyFilter)
       && search.includes(appliedQuery.toLowerCase());
   });
   const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -101,9 +94,6 @@ function JobsHomeContent({ initialCategory, initialQuery }: { initialCategory: s
     <main className="portal-shell">
       <SiteHeader />
       <section className="portal-content" aria-label="Browse jobs">
-        <div className="content-heading" id="latest-jobs">
-          <h1>Latest job openings</h1>
-        </div>
         <div className="browse-layout">
           <div className="jobs-column">
             <a className="whatsapp-follow-card" href="https://whatsapp.com/channel/0029VbCLJWjCRs1nIKjUlh3p" target="_blank" rel="noreferrer">
@@ -149,11 +139,6 @@ function JobsHomeContent({ initialCategory, initialQuery }: { initialCategory: s
               {recentWalkInJobs.map((job) => <Link className="sidebar-job" href={`/job/${job.id}/${slug(job.title)}`} key={job.id}><ChevronRight className="sidebar-job-arrow" size={15} aria-hidden="true" /><span className="sidebar-job-copy"><strong>{job.title}</strong><small>{job.company} · {postedDate(job.createdDate)}</small></span></Link>)}
               {recentWalkInJobs.length === 0 ? <p className="sidebar-empty">No recent walk-ins.</p> : null}
               <button type="button" className="side-link" onClick={() => chooseFilter("Walk-ins")}>More walk-ins</button>
-            </section>
-            <section className="side-section side-filter-section">
-              <p className="eyebrow">REFINE LISTINGS</p><h2>Filter listings</h2>
-              <label className="sidebar-filter-control"><span>Job type</span><select value={jobType} onChange={(event) => { setJobType(event.target.value); setPage(1); }}>{jobTypes.map((type) => <option key={type}>{type}</option>)}</select></label>
-              <label className="sidebar-filter-control"><span>Company</span><select value={companyFilter} onChange={(event) => { setCompanyFilter(event.target.value); setPage(1); }}>{companies.map((company) => <option key={company}>{company}</option>)}</select></label>
             </section>
           </aside>
         </div>

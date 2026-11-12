@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Briefcase, LogIn, MessageCircle } from "lucide-react";
+import InstallAppButton from "./install-app-button";
 
 const whatsappUrl = "https://whatsapp.com/channel/0029VbCLJWjCRs1nIKjUlh3p";
 
@@ -18,7 +19,7 @@ export default function SiteFooter() {
           <section className="footer-section">
             <h2 className="footer-title">Quick links</h2>
             <ul className="footer-links">
-              <li><Link href="/#latest-jobs">All latest jobs</Link></li>
+              <li><Link href="/">All latest jobs</Link></li>
               <li><Link href="/#government">Government jobs</Link></li>
               <li><Link href="/#walk-ins">Walk-in drives</Link></li>
               <li><Link href="/?category=all">All categories</Link></li>
@@ -29,6 +30,7 @@ export default function SiteFooter() {
             <div className="footer-links">
               <a href={whatsappUrl} target="_blank" rel="noreferrer"><MessageCircle size={15} aria-hidden="true" /> Job alerts on WhatsApp</a>
               <Link href="/login"><LogIn size={15} aria-hidden="true" /> Publisher sign in</Link>
+              <InstallAppButton />
             </div>
           </section>
         </div>

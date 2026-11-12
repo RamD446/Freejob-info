@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { ArrowUpRight, Briefcase, ChevronRight, LogOut, Menu, Search, UserRound, X } from "lucide-react";
+import { onAuthStateChanged } from "firebase/auth";
+import { Briefcase, ChevronRight, LogIn, Menu, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getFirebaseServices } from "../lib/firebase";
 
@@ -17,8 +17,6 @@ const jobCategories = [
 export default function SiteHeader() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
-  const [userEmail, setUserEmail] = useState("");
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
 
@@ -26,7 +24,6 @@ export default function SiteHeader() {
     const { auth } = getFirebaseServices();
     return onAuthStateChanged(auth, (user) => {
       setIsSignedIn(Boolean(user));
-      setUserEmail(user?.email || "");
       setAuthLoading(false);
     });
   }, []);
@@ -35,7 +32,6 @@ export default function SiteHeader() {
     function closeMenus(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setIsCategoryMenuOpen(false);
-        setIsProfileOpen(false);
         setIsSearchOpen(false);
       }
     }
@@ -43,40 +39,25 @@ export default function SiteHeader() {
     return () => window.removeEventListener("keydown", closeMenus);
   }, []);
 
-  async function logout() {
-    const { auth } = getFirebaseServices();
-    setIsProfileOpen(false);
-    await signOut(auth);
-  }
-
   return (
     <header className="site-header">
       <div className="site-header-main">
         <div className="header-brand-group">
-          <button className="header-icon-button category-menu-trigger" type="button" onClick={() => { setIsCategoryMenuOpen(true); setIsSearchOpen(false); setIsProfileOpen(false); }} aria-label="Open job categories" aria-expanded={isCategoryMenuOpen} aria-controls="category-drawer" title="Job categories">
+          <button className="header-icon-button category-menu-trigger" type="button" onClick={() => { setIsCategoryMenuOpen(true); setIsSearchOpen(false); }} aria-label="Open job categories" aria-expanded={isCategoryMenuOpen} aria-controls="category-drawer" title="Job categories">
             <Menu size={21} aria-hidden="true" />
           </button>
-          <Link className="brand" href="/" aria-label="freejob-info home">
-            <span className="brand-wordmark">freejob<span>-info</span></span>
+          <Link className="brand" href="/" aria-label="Freejob Information home">
+            <span className="brand-wordmark"><span className="brand-wordmark-main">Freejob</span><span className="brand-wordmark-subtitle">Information</span></span>
           </Link>
         </div>
         <div className="header-actions">
-          <button className="header-icon-button" type="button" onClick={() => { setIsSearchOpen(!isSearchOpen); setIsProfileOpen(false); }} aria-label={isSearchOpen ? "Close job search" : "Search jobs"} aria-expanded={isSearchOpen} title="Search jobs">
+          <button className="header-icon-button" type="button" onClick={() => setIsSearchOpen(!isSearchOpen)} aria-label={isSearchOpen ? "Close job search" : "Search jobs"} aria-expanded={isSearchOpen} title="Search jobs">
             {isSearchOpen ? <X size={19} aria-hidden="true" /> : <Search size={19} aria-hidden="true" />}
           </button>
-          <div className="profile-control">
-            <button className="header-icon-button" type="button" onClick={() => { setIsProfileOpen(!isProfileOpen); setIsSearchOpen(false); }} aria-label="Account menu" aria-expanded={isProfileOpen} title="Manage jobs">
-              <UserRound size={19} aria-hidden="true" />
-            </button>
-            {isProfileOpen ? (
-              <div className="profile-menu" role="menu">
-                {isSignedIn && userEmail ? <p className="profile-email">{userEmail}</p> : null}
-                <Link href="/login" role="menuitem" onClick={() => setIsProfileOpen(false)}>Manage jobs <ArrowUpRight size={14} aria-hidden="true" /></Link>
-                {isSignedIn ? <button type="button" role="menuitem" onClick={logout}><LogOut size={14} aria-hidden="true" /> Logout</button> : null}
-                {authLoading ? <span className="profile-status">Checking account...</span> : null}
-              </div>
-            ) : null}
-          </div>
+          {!authLoading ? <Link className="header-account-link" href="/login" aria-label={isSignedIn ? "Manage jobs" : "Login"}>
+            {isSignedIn ? <Briefcase size={15} aria-hidden="true" /> : <LogIn size={15} aria-hidden="true" />}
+            <span>{isSignedIn ? "Manage jobs" : "Login"}</span>
+          </Link> : null}
           {isSearchOpen ? (
             <div className="header-search-panel">
               <form className="header-search-form" action="/" method="get">

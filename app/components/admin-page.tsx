@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { browserSessionPersistence, onAuthStateChanged, setPersistence, signInWithEmailAndPassword, type User } from "firebase/auth";
+import { browserSessionPersistence, onAuthStateChanged, setPersistence, signInWithEmailAndPassword, signOut, type User } from "firebase/auth";
 import { onValue, push, ref, remove, update } from "firebase/database";
 import { useEffect, useState, type FormEvent } from "react";
 import * as XLSX from "xlsx";
@@ -110,9 +110,23 @@ export default function AdminPage() {
       await setPersistence(auth, browserSessionPersistence);
       await signInWithEmailAndPassword(auth, email.trim(), password);
     } catch (error) {
-      setLoginError(error instanceof Error ? error.message : "Unable to sign in. Check your credentials.");
+      const errorCode = typeof error === "object" && error !== null && "code" in error ? String(error.code) : "";
+      if (["auth/invalid-credential", "auth/invalid-login-credentials", "auth/user-not-found", "auth/wrong-password"].includes(errorCode)) {
+        setLoginError("Invalid email or password. Please try again.");
+      } else if (errorCode === "auth/invalid-email") {
+        setLoginError("Enter a valid email address.");
+      } else {
+        setLoginError(error instanceof Error ? error.message : "Unable to sign in. Check your credentials.");
+      }
       setAuthLoading(false);
     }
+  }
+
+  async function logout() {
+    const { auth } = getFirebaseServices();
+    await signOut(auth);
+    setFormOpen(false);
+    setEditingId(null);
   }
 
   function startCreate() {
@@ -277,7 +291,7 @@ export default function AdminPage() {
     <main className="portal-shell">
       <SiteHeader />
       <section className="admin-wrap">
-        <div className="admin-heading"><div><p className="eyebrow">PUBLISHER WORKSPACE</p><h1>Job management</h1><p>Signed in as <strong>{user.email}</strong></p></div></div>
+        <div className="admin-heading"><div><p className="eyebrow">PUBLISHER WORKSPACE</p><h1>Job management</h1><p>Signed in as <strong>{user.email}</strong></p></div><button className="secondary-button admin-signout" type="button" onClick={logout}>Sign out</button></div>
         <div className="admin-summary"><strong>{jobs.length.toLocaleString("en-IN")}</strong><span>published listings</span><span className="admin-summary-divider" /><span>Manage the live freejob-info feed</span></div>
         <div className="admin-toolbar"><div className="admin-controls"><label className="sr-only" htmlFor="admin-search">Search jobs</label><input id="admin-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search title or company" /><label className="sr-only" htmlFor="admin-type">Filter by job type</label><select id="admin-type" value={filter} onChange={(event) => setFilter(event.target.value)}><option>All job types</option>{JOB_TYPES.map((type) => <option key={type}>{type}</option>)}</select></div><div className="admin-actions"><label className="secondary-button import-button">{importing ? "Importing…" : "Import XLS"}<input type="file" accept=".xls,.xlsx" onChange={importJobs} disabled={importing} /></label><button className="secondary-button" type="button" onClick={exportJobs}>Export XLS</button><button className="primary-button" type="button" onClick={startCreate}>＋ Create job</button></div></div>
         {notice ? <p className="admin-notice" role="status">{notice}</p> : null}

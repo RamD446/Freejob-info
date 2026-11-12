@@ -466,6 +466,12 @@ button {
 }
 
 .brand-wordmark {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.brand-wordmark-main {
   color: #fff;
   font-family: Georgia, "Times New Roman", serif;
   font-size: 20px;
@@ -473,9 +479,12 @@ button {
   line-height: 1;
 }
 
-.brand-wordmark span {
+.brand-wordmark-subtitle {
   color: #b9dff5;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 9px;
   font-weight: 500;
+  line-height: 1;
 }
 
 .brand-mark {
@@ -608,11 +617,6 @@ button {
   border-color: rgba(255, 255, 255, 0.55);
 }
 
-.profile-control {
-  position: relative;
-}
-
-.profile-menu,
 .header-search-panel {
   background: #fff;
   border: 1px solid var(--line);
@@ -623,49 +627,26 @@ button {
   z-index: 10;
 }
 
-.profile-menu {
-  min-width: 205px;
-  padding: 6px;
-  right: 0;
-  top: calc(100% + 9px);
-}
-
-.profile-menu a,
-.profile-menu button {
+.header-account-link {
   align-items: center;
-  background: transparent;
-  border: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.27);
   border-radius: 3px;
-  color: var(--foreground);
-  cursor: pointer;
-  display: flex;
-  font-size: 12px;
-  gap: 9px;
-  justify-content: flex-start;
+  color: #fff;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 7px;
   min-height: 36px;
-  padding: 0 9px;
+  padding: 0 10px;
   text-decoration: none;
-  width: 100%;
+  transition: background 150ms ease, border-color 150ms ease;
 }
 
-.profile-menu a:hover,
-.profile-menu button:hover {
-  background: #edf3f8;
-}
-
-.profile-email,
-.profile-status {
-  color: var(--muted);
-  display: block;
-  font-size: 10px;
-  margin: 0;
-  overflow-wrap: anywhere;
-  padding: 8px 9px;
-}
-
-.profile-email {
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 4px;
+.header-account-link:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #fff;
 }
 
 .header-search-panel {
@@ -884,22 +865,6 @@ button {
   padding: 47px 28px 68px;
 }
 
-.content-heading {
-  align-items: center;
-  background: #eaf2f8;
-  border: 1px solid #d7e4ee;
-  border-left: 4px solid #1c6797;
-  border-radius: 5px;
-  display: flex;
-  margin-bottom: 18px;
-  min-height: 56px;
-  padding: 12px 16px;
-  scroll-margin-top: 120px;
-  width: 100%;
-}
-
-.content-heading h1,
-.content-heading h2,
 .related-sidebar h2,
 .detail-section h2,
 .comments-title h2,
@@ -910,14 +875,6 @@ button {
   letter-spacing: 0;
   line-height: 1.2;
   margin: 0;
-}
-
-.content-heading h1 {
-  color: #16466b;
-  font-family: var(--font-geist-sans), sans-serif;
-  font-size: 21px;
-  font-weight: 700;
-  line-height: 1.25;
 }
 
 .whatsapp-follow-card {
@@ -1706,6 +1663,41 @@ button {
 
 .footer-links a:hover {
   color: #fff;
+}
+
+.footer-install-wrap {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
+.footer-install-button {
+  align-items: center;
+  background: #1c6797;
+  border: 1px solid #377da8;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 11px;
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+.footer-install-button:hover {
+  background: #15547c;
+  transform: translateY(-1px);
+}
+
+.footer-install-message {
+  color: #b7c6d5;
+  font-size: 10px;
+  line-height: 1.45;
+  max-width: 260px;
 }
 
 .footer-bottom {
@@ -2541,10 +2533,12 @@ button {
 @media (max-width: 650px) {
   .site-header-main { height: 58px; padding: 0 16px; }
   .header-brand-group { gap: 7px; }
-  .brand-wordmark { font-size: 18px; }
+  .brand-wordmark-main { font-size: 18px; }
+  .brand-wordmark-subtitle { font-size: 8px; }
   .brand-mark { height: 29px; width: 31px; }
   .header-actions { gap: 6px; }
   .header-icon-button { height: 33px; width: 33px; }
+  .header-account-link { font-size: 9px; gap: 5px; min-height: 33px; padding: 0 7px; }
   .header-search-panel { right: 0; }
   .hero-band { display: block; min-height: 0; padding: 44px 21px 30px; }
   .hero-copy h1 { font-size: 43px; }
@@ -2560,8 +2554,6 @@ button {
   .hero-stat span { font-size: 8px; }
   .hero-stamp { right: 0; top: -19px; }
   .portal-content { padding: 33px 18px 44px; }
-  .content-heading { margin-bottom: 14px; min-height: 48px; padding: 10px 12px; }
-  .content-heading h1, .content-heading h2 { font-size: 18px; }
   .browse-layout, .detail-grid { display: block; padding-top: 15px; }
   .browse-sidebar, .related-sidebar { border: 1px solid var(--line); margin-top: 28px; padding: 17px; }
   .side-section { padding-bottom: 16px; }
@@ -2611,6 +2603,7 @@ button {
   .login-form { padding: 22px 18px; }
   .admin-wrap { padding: 30px 18px 45px; }
   .admin-heading h1 { font-size: 27px; }
+  .admin-signout { flex: 0 0 auto; white-space: nowrap; }
   .admin-summary { align-items: flex-start; flex-wrap: wrap; gap: 5px 10px; }
   .admin-summary .admin-summary-divider { display: none; }
   .admin-summary > span:last-child { flex-basis: 100%; }
