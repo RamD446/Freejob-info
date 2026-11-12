@@ -57,8 +57,7 @@ export default function SiteHeader() {
             <Menu size={21} aria-hidden="true" />
           </button>
           <Link className="brand" href="/" aria-label="freejob-info home">
-            <span className="brand-mark" aria-hidden="true"><Briefcase size={18} strokeWidth={2} /></span>
-            <span>freejob-info</span>
+            <span className="brand-wordmark">freejob<span>-info</span></span>
           </Link>
         </div>
         <div className="header-actions">

@@ -459,14 +459,23 @@ button {
 }
 
 .brand {
-  align-items: center;
   color: #fff;
-  display: inline-flex;
-  font-size: 15px;
-  font-weight: 720;
-  gap: 10px;
+  display: inline-block;
   text-decoration: none;
   white-space: nowrap;
+}
+
+.brand-wordmark {
+  color: #fff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.brand-wordmark span {
+  color: #b9dff5;
+  font-weight: 500;
 }
 
 .brand-mark {
@@ -769,10 +778,16 @@ button {
 }
 
 .search-symbol {
+  align-items: center;
   color: #748278;
-  font-size: 25px;
+  display: inline-flex;
   line-height: 1;
   padding: 0 11px;
+}
+
+.search-symbol svg {
+  height: 17px;
+  width: 17px;
 }
 
 .search-bar input {
@@ -870,16 +885,17 @@ button {
 }
 
 .content-heading {
-  align-items: end;
-  border-bottom: 1px solid var(--line);
+  align-items: center;
+  background: #eaf2f8;
+  border: 1px solid #d7e4ee;
+  border-left: 4px solid #1c6797;
+  border-radius: 5px;
   display: flex;
-  justify-content: space-between;
-  padding-bottom: 18px;
+  margin-bottom: 18px;
+  min-height: 56px;
+  padding: 12px 16px;
   scroll-margin-top: 120px;
-}
-
-.content-heading .eyebrow {
-  margin-bottom: 6px;
+  width: 100%;
 }
 
 .content-heading h1,
@@ -896,10 +912,12 @@ button {
   margin: 0;
 }
 
-.results-total {
-  color: var(--muted);
-  font-size: 11px;
-  padding-bottom: 3px;
+.content-heading h1 {
+  color: #16466b;
+  font-family: var(--font-geist-sans), sans-serif;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 .whatsapp-follow-card {
@@ -934,6 +952,31 @@ button {
   width: 36px;
 }
 
+.whatsapp-brand-mark {
+  display: inline-flex;
+  flex: 0 0 20px;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.whatsapp-brand-bubble {
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  stroke-width: 2.2;
+  width: 100%;
+}
+
+.whatsapp-brand-phone {
+  height: 9px;
+  left: 5px;
+  position: absolute;
+  top: 5px;
+  transform: rotate(-12deg);
+  width: 9px;
+}
+
 .whatsapp-follow-copy {
   display: grid;
   gap: 3px;
@@ -964,9 +1007,32 @@ button {
   white-space: nowrap;
 }
 
+.whatsapp-follow-action .whatsapp-brand-mark {
+  flex-basis: 16px;
+  height: 16px;
+  width: 16px;
+}
+
+.whatsapp-follow-action .whatsapp-brand-phone {
+  height: 7px;
+  left: 4px;
+  top: 4px;
+  width: 7px;
+}
+
 .home-search-bar {
   margin-bottom: 15px;
   max-width: none;
+}
+
+.home-search-bar input {
+  padding-left: 10px;
+}
+
+.home-search-bar button {
+  flex: 0 0 42px;
+  padding: 0;
+  width: 42px;
 }
 
 .browse-layout {
@@ -1215,6 +1281,17 @@ button {
   margin-left: 5px;
 }
 
+.browse-sidebar .side-link,
+.browse-sidebar .side-link span {
+  color: #1565c0;
+}
+
+.browse-sidebar .side-link:hover {
+  background: #1565c0;
+  border-color: #1565c0;
+  color: #fff;
+}
+
 .browse-sidebar {
   align-self: start;
   background: #fff;
@@ -1258,18 +1335,40 @@ button {
 }
 
 .side-section > .side-link {
-  background: transparent;
-  border: 0;
+  align-items: center;
+  background: #edf5fd;
+  border: 1px solid #cfe0f0;
+  border-radius: 4px;
   cursor: pointer;
-  padding: 0;
+  display: flex;
+  justify-content: center;
+  margin: 14px auto 0;
+  max-width: 100%;
+  min-height: 34px;
+  padding: 0 12px;
+  text-align: center;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+  width: fit-content;
 }
 
 .sidebar-job {
+  align-items: center;
   border-top: 1px solid var(--line);
   display: grid;
-  gap: 4px;
+  gap: 7px;
+  grid-template-columns: 14px minmax(0, 1fr);
   padding: 9px 0;
   text-decoration: none;
+}
+
+.sidebar-job-arrow {
+  color: #1565c0;
+}
+
+.sidebar-job-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
 }
 
 .sidebar-job strong {
@@ -1434,50 +1533,56 @@ button {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
   justify-content: center;
   min-height: 56vh;
   padding: 48px 20px;
   text-align: center;
 }
 
-.loader-icon-wrap {
+.loader-orbit {
   align-items: center;
   display: flex;
-  flex-direction: column;
-  gap: 9px;
+  height: 66px;
+  justify-content: center;
+  margin-bottom: 5px;
+  position: relative;
+  width: 66px;
+}
+
+.loader-orbit::before {
+  animation: loader-spin 1s linear infinite;
+  border: 2px solid #dce7ef;
+  border-right-color: #1c6797;
+  border-top-color: var(--rust);
+  border-radius: 50%;
+  content: "";
+  inset: 0;
+  position: absolute;
+}
+
+.loader-orbit::after {
+  background: #1c6797;
+  border: 2px solid var(--background);
+  border-radius: 50%;
+  content: "";
+  height: 8px;
+  position: absolute;
+  right: 3px;
+  top: 5px;
+  width: 8px;
 }
 
 .loader-briefcase {
-  animation: briefcase-pulse 1.2s ease-in-out infinite;
   color: var(--green);
+  position: relative;
 }
-
-.loader-dots {
-  display: flex;
-  gap: 6px;
-}
-
-.loader-dots span {
-  animation: loader-dot-bounce 1.2s ease-in-out infinite;
-  background: var(--green);
-  border-radius: 50%;
-  height: 7px;
-  width: 7px;
-}
-
-.loader-dots span:nth-child(2) { animation-delay: 160ms; }
-.loader-dots span:nth-child(3) { animation-delay: 320ms; }
 
 .loader-title {
   color: var(--green);
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 750;
-  margin: 8px 0 0;
-}
-
-.loader-ellipsis {
-  animation: ellipsis-blink 1.2s steps(1) infinite;
+  margin: 0;
 }
 
 .loader-sub {
@@ -1486,19 +1591,8 @@ button {
   margin: 0;
 }
 
-@keyframes briefcase-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.12); }
-}
-
-@keyframes loader-dot-bounce {
-  0%, 80%, 100% { opacity: 0.4; transform: translateY(0); }
-  40% { opacity: 1; transform: translateY(-7px); }
-}
-
-@keyframes ellipsis-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+@keyframes loader-spin {
+  to { transform: rotate(360deg); }
 }
 
 .pagination {
@@ -1787,8 +1881,15 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  justify-content: center;
   margin: 20px 0 4px;
   padding-top: 18px;
+}
+
+.detail-action-links .apply-button,
+.detail-action-links .pdf-link {
+  justify-content: center;
+  text-align: center;
 }
 
 .detail-whatsapp-link {
@@ -2440,7 +2541,7 @@ button {
 @media (max-width: 650px) {
   .site-header-main { height: 58px; padding: 0 16px; }
   .header-brand-group { gap: 7px; }
-  .brand { font-size: 13px; }
+  .brand-wordmark { font-size: 18px; }
   .brand-mark { height: 29px; width: 31px; }
   .header-actions { gap: 6px; }
   .header-icon-button { height: 33px; width: 33px; }
@@ -2451,7 +2552,7 @@ button {
   .search-bar { min-height: 49px; }
   .search-bar input { font-size: 10px; }
   .search-bar button { font-size: 9px; gap: 7px; min-height: 37px; padding: 0 10px; }
-  .search-symbol { padding: 0 7px; }
+  .home-search-bar button { flex-basis: 37px; padding: 0; width: 37px; }
   .hero-aside { border-left: 0; border-top: 1px solid rgba(255, 255, 255, 0.24); display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 29px; padding: 14px 0 0; }
   .hero-aside-label { grid-column: 1 / -1; margin-bottom: 3px; }
   .hero-stat { align-items: flex-start; border-bottom: 0; flex-direction: column; gap: 2px; padding: 5px 0; }
@@ -2459,7 +2560,8 @@ button {
   .hero-stat span { font-size: 8px; }
   .hero-stamp { right: 0; top: -19px; }
   .portal-content { padding: 33px 18px 44px; }
-  .content-heading h1, .content-heading h2 { font-size: 22px; }
+  .content-heading { margin-bottom: 14px; min-height: 48px; padding: 10px 12px; }
+  .content-heading h1, .content-heading h2 { font-size: 18px; }
   .browse-layout, .detail-grid { display: block; padding-top: 15px; }
   .browse-sidebar, .related-sidebar { border: 1px solid var(--line); margin-top: 28px; padding: 17px; }
   .side-section { padding-bottom: 16px; }
@@ -2467,8 +2569,15 @@ button {
   .filter-tabs { margin-right: -18px; }
   .filter-tab { padding: 0 10px; }
   .jobs-toolbar { min-height: 45px; }
-  .whatsapp-follow-card { align-items: flex-start; flex-wrap: wrap; gap: 8px 10px; padding: 10px; }
-  .whatsapp-follow-action { margin-left: 46px; }
+  .whatsapp-follow-card { align-items: center; flex-wrap: nowrap; gap: 8px; padding: 8px; }
+  .whatsapp-follow-icon { flex-basis: 30px; height: 30px; width: 30px; }
+  .whatsapp-follow-copy { flex: 1 1 0; gap: 2px; }
+  .whatsapp-follow-copy strong { font-size: 9px; white-space: nowrap; }
+  .whatsapp-follow-copy small { font-size: 8px; white-space: nowrap; }
+  .whatsapp-follow-action { flex: 0 0 auto; gap: 4px; margin-left: 0; padding: 7px 6px; font-size: 8px; }
+  .whatsapp-follow-action .whatsapp-brand-mark { flex-basis: 14px; height: 14px; width: 14px; }
+  .whatsapp-follow-action .whatsapp-brand-phone { height: 6px; left: 4px; top: 4px; width: 6px; }
+  .whatsapp-follow-action > svg:last-child { height: 13px; width: 13px; }
   .job-row { gap: 8px; min-height: 0; padding: 12px; }
   .company-badge { flex-basis: 36px; font-size: 17px; height: 36px; }
   .job-title-link { font-size: 16px; }

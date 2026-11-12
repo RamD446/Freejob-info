@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowUpRight, Eye, MessageCircle, Share2 } from "lucide-react";
+import { ChevronRight, Eye, MessageCircle, Phone, Search, Share2 } from "lucide-react";
 import { onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import CompanyBadge from "./company-badge";
@@ -44,6 +44,7 @@ function JobsHomeContent({ initialCategory, initialQuery }: { initialCategory: s
   const [jobType, setJobType] = useState("All job types");
   const [companyFilter, setCompanyFilter] = useState("All companies");
   const [query, setQuery] = useState(initialQuery);
+  const [appliedQuery, setAppliedQuery] = useState(initialQuery);
   const [page, setPage] = useState(1);
   const pageSize = 30;
 
@@ -74,12 +75,12 @@ function JobsHomeContent({ initialCategory, initialQuery }: { initialCategory: s
     return categoryMatch
       && (jobType === "All job types" || job.jobType === jobType)
       && (companyFilter === "All companies" || job.company?.trim() === companyFilter)
-      && search.includes(query.toLowerCase());
+      && search.includes(appliedQuery.toLowerCase());
   });
   const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const visibleJobs = filtered.slice((page - 1) * pageSize, page * pageSize);
-  const recentGovernmentJobs = jobs.filter((job) => job.jobType === "Government Jobs").slice(0, 4);
-  const recentWalkInJobs = jobs.filter((job) => job.walkInDrive).slice(0, 4);
+  const recentGovernmentJobs = jobs.filter((job) => job.jobType === "Government Jobs").slice(0, 10);
+  const recentWalkInJobs = jobs.filter((job) => job.walkInDrive).slice(0, 10);
 
   function chooseFilter(value: string) {
     setFilter(value);
@@ -101,21 +102,20 @@ function JobsHomeContent({ initialCategory, initialQuery }: { initialCategory: s
       <SiteHeader />
       <section className="portal-content" aria-label="Browse jobs">
         <div className="content-heading" id="latest-jobs">
-          <div><p className="eyebrow">FREE JOB INFORMATION</p><h1>Latest job openings</h1></div>
-          <span className="results-total">{filtered.length} {filtered.length === 1 ? "role" : "roles"}</span>
+          <h1>Latest job openings</h1>
         </div>
         <div className="browse-layout">
           <div className="jobs-column">
             <a className="whatsapp-follow-card" href="https://whatsapp.com/channel/0029VbCLJWjCRs1nIKjUlh3p" target="_blank" rel="noreferrer">
-              <span className="whatsapp-follow-icon"><MessageCircle size={20} aria-hidden="true" /></span>
-              <span className="whatsapp-follow-copy"><strong>Never miss a new opening</strong><small>Get free job alerts on WhatsApp.</small></span>
-              <span className="whatsapp-follow-action">Join jobs group <ArrowUpRight size={15} aria-hidden="true" /></span>
+              <span className="whatsapp-follow-icon" aria-hidden="true"><span className="whatsapp-brand-mark"><MessageCircle className="whatsapp-brand-bubble" /><Phone className="whatsapp-brand-phone" /></span></span>
+              <span className="whatsapp-follow-copy"><strong>New job openings</strong><small>Never miss job alerts</small></span>
+              <span className="whatsapp-follow-action"><span className="whatsapp-brand-mark" aria-hidden="true"><MessageCircle className="whatsapp-brand-bubble" /><Phone className="whatsapp-brand-phone" /></span>Follow latest jobs</span>
             </a>
-            <form className="search-bar home-search-bar" id="job-search" onSubmit={(event) => { event.preventDefault(); setPage(1); }}>
-              <span className="search-symbol" aria-hidden="true">⌕</span>
+            <form className="search-bar home-search-bar" id="job-search" onSubmit={(event) => { event.preventDefault(); setAppliedQuery(query); setPage(1); }}>
+              <span className="search-symbol" aria-hidden="true"><Search size={17} /></span>
               <label className="sr-only" htmlFor="job-search-input">Search jobs and companies</label>
-              <input id="job-search-input" value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="Search jobs, companies, or keywords" />
-              <button type="submit">Search jobs <span aria-hidden="true">→</span></button>
+              <input id="job-search-input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search jobs, companies, or keywords" />
+              <button type="submit" aria-label="Search jobs" title="Search jobs"><Search size={18} aria-hidden="true" /></button>
             </form>
             <div className="jobs-toolbar">
               <span>Sorted by newest</span>
@@ -140,15 +140,15 @@ function JobsHomeContent({ initialCategory, initialQuery }: { initialCategory: s
           <aside className="browse-sidebar">
             <section id="government" className="side-section">
               <p className="eyebrow">LATEST UPDATES</p><h2>Recent government jobs</h2>
-              {recentGovernmentJobs.map((job) => <Link className="sidebar-job" href={`/job/${job.id}/${slug(job.title)}`} key={job.id}><strong>{job.title}</strong><small>{job.company} · {postedDate(job.createdDate)}</small></Link>)}
+              {recentGovernmentJobs.map((job) => <Link className="sidebar-job" href={`/job/${job.id}/${slug(job.title)}`} key={job.id}><ChevronRight className="sidebar-job-arrow" size={15} aria-hidden="true" /><span className="sidebar-job-copy"><strong>{job.title}</strong><small>{job.company} · {postedDate(job.createdDate)}</small></span></Link>)}
               {recentGovernmentJobs.length === 0 ? <p className="sidebar-empty">No recent listings.</p> : null}
-              <button type="button" className="side-link" onClick={() => chooseFilter("Government Jobs")}>Browse all government jobs <span>→</span></button>
+              <button type="button" className="side-link" onClick={() => chooseFilter("Government Jobs")}>More government jobs</button>
             </section>
             <section id="walk-ins" className="side-section walkin-section">
               <p className="eyebrow">MEET THEM IN PERSON</p><h2>Recent walk-ins</h2>
-              {recentWalkInJobs.map((job) => <Link className="sidebar-job" href={`/job/${job.id}/${slug(job.title)}`} key={job.id}><strong>{job.title}</strong><small>{job.company} · {postedDate(job.createdDate)}</small></Link>)}
+              {recentWalkInJobs.map((job) => <Link className="sidebar-job" href={`/job/${job.id}/${slug(job.title)}`} key={job.id}><ChevronRight className="sidebar-job-arrow" size={15} aria-hidden="true" /><span className="sidebar-job-copy"><strong>{job.title}</strong><small>{job.company} · {postedDate(job.createdDate)}</small></span></Link>)}
               {recentWalkInJobs.length === 0 ? <p className="sidebar-empty">No recent walk-ins.</p> : null}
-              <button type="button" className="side-link" onClick={() => chooseFilter("Walk-ins")}>Browse all walk-ins <span>→</span></button>
+              <button type="button" className="side-link" onClick={() => chooseFilter("Walk-ins")}>More walk-ins</button>
             </section>
             <section className="side-section side-filter-section">
               <p className="eyebrow">REFINE LISTINGS</p><h2>Filter listings</h2>
